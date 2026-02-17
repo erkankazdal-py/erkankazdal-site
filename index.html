@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Erkan Kazdal</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#0f0f1a;
+    --text: rgba(255,255,255,.92);
+    --muted: rgba(255,255,255,.70);
+    --muter: rgba(255,255,255,.55);
+    --line: rgba(255,255,255,.18);
+    --card: rgba(15,15,26,.55);
+    --accent: #ff7a18;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    min-height:100vh;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(circle at 20% 90%, #ff7a18 0%, transparent 40%),
+      radial-gradient(circle at 80% 10%, #1e3cff 0%, transparent 50%),
+      var(--bg);
+    display:flex;
+    justify-content:center;
+  }
+
+  .wrap{
+    width:min(980px, 92vw);
+    padding: 110px 0 90px;
+    position: relative;
+  }
+
+  /* LANGUAGE TOGGLE */
+  .lang{
+    position:absolute;
+    top: 20px;
+    right: 0;
+    font-size: 13px;
+    letter-spacing: 2px;
+    user-select: none;
+  }
+  .lang button{
+    background: transparent;
+    border: none;
+    color: rgba(255,255,255,.85);
+    cursor: pointer;
+    padding: 6px 6px;
+    font: inherit;
+    letter-spacing: inherit;
+    opacity: .55;
+    transition: .2s;
+  }
+  .lang button.active{ opacity: 1; }
+  .lang .sep{ opacity:.35; padding: 0 4px; }
+
+  header{
+    text-align:center;
+    margin-bottom: 40px;
+  }
+
+  h1{
+    font-family: "Playfair Display", serif;
+    font-weight: 500;
+    font-size: clamp(44px, 6vw, 72px);
+    letter-spacing: 0.5px;
+  }
+
+  .sub{
+    margin-top: 10px;
+    color: var(--muter);
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* MENU LIST */
+  .menu{
+    display:grid;
+    gap: 14px;
+    margin: 44px auto 22px;
+    width:min(640px, 96vw);
+  }
+
+  .menu-item{
+    border: 1px solid transparent;
+    border-radius: 18px;
+    transition: transform .25s ease, border-color .25s ease, background .25s ease;
+    background: transparent;
+    overflow: hidden;
+  }
+
+  .menu-button{
+    width: 100%;
+    appearance:none;
+    border:none;
+    background: transparent;
+    color: var(--text);
+    padding: 18px 18px;
+    text-align:left;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 16px;
+  }
+
+  .label{
+    display:flex;
+    flex-direction:column;
+    gap: 6px;
+  }
+
+  .label .title{
+    font-size: 16px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.90);
+  }
+
+  .label .hint{
+    font-size: 13px;
+    color: var(--muter);
+    letter-spacing: .2px;
+    line-height: 1.45;
+    max-width: 52ch;
+  }
+
+  .chev{
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+    display:grid;
+    place-items:center;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,.04);
+    transition: transform .25s ease, border-color .25s ease, background .25s ease;
+    flex: 0 0 auto;
+  }
+
+  .chev span{
+    display:block;
+    transform: translateY(-1px);
+    font-size: 18px;
+    opacity: .9;
+  }
+
+  /* HOVER PREVIEW (FLOW) */
+  .preview{
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: max-height .25s ease, opacity .2s ease, transform .25s ease, padding .25s ease, border-color .25s ease;
+    padding: 0 18px;
+    border-top: 1px solid transparent;
+    background: linear-gradient(180deg, rgba(15,15,26,.25), rgba(0,0,0,.10));
+  }
+
+  .preview .p-body{
+    font-size: 13px;
+    line-height: 1.6;
+    color: rgba(255,255,255,.78);
+    padding-bottom: 14px;
+  }
+
+  .menu-item:hover{
+    transform: translateY(-2px);
+    border-color: rgba(255,255,255,.22);
+    background: rgba(255,255,255,.03);
+  }
+
+  .menu-item:hover .chev{
+    border-color: rgba(255,255,255,.28);
+    background: rgba(255,255,255,.06);
+  }
+
+  .menu-item:hover .preview{
+    max-height: 180px;
+    opacity: 1;
+    transform: translateY(0);
+    padding: 12px 18px 0;
+    border-top-color: rgba(255,255,255,.12);
+  }
+
+  /* ACTIVE (expanded) */
+  .menu-item[data-open="true"]{
+    border-color: rgba(255,255,255,.26);
+    background: rgba(255,255,255,.04);
+  }
+  .menu-item[data-open="true"] .chev{
+    transform: rotate(180deg);
+    border-color: rgba(255,255,255,.35);
+  }
+
+  /* EXPAND AREA */
+  .panel{
+    width:min(780px, 96vw);
+    margin: 22px auto 0;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: rgba(0,0,0,.12);
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: max-height .35s ease, opacity .25s ease, transform .25s ease;
+  }
+
+  .panel.open{
+    max-height: 2200px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .panel-inner{
+    padding: 22px 22px 6px;
+  }
+
+  .panel h2{
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.68);
+    margin-bottom: 12px;
+  }
+
+  .panel p{
+    color: rgba(255,255,255,.82);
+    line-height: 1.85;
+    font-size: 16px;
+    margin-bottom: 14px;
+  }
+
+  .list{
+    margin-top: 10px;
+    display:grid;
+    gap: 10px;
+    padding-bottom: 18px;
+  }
+
+  .item{
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.04);
+    border-radius: 16px;
+    padding: 14px 14px;
+  }
+  .item .meta{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .item .when{
+    font-size: 12px;
+    color: rgba(255,255,255,.60);
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+  }
+  .item .name{
+    font-weight: 600;
+    letter-spacing: .2px;
+  }
+  .item .desc{
+    font-size: 14px;
+    color: rgba(255,255,255,.78);
+    line-height: 1.75;
+  }
+
+  .badge-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .badge{
+    border: 1px solid rgba(255,255,255,.16);
+    background: rgba(255,255,255,.04);
+    padding: 7px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    color: rgba(255,255,255,.80);
+    letter-spacing: .2px;
+  }
+
+  .contact{
+    margin-top: 8px;
+    font-size: 14px;
+    color: rgba(255,255,255,.72);
+    line-height: 1.8;
+  }
+
+  footer{
+    margin-top: 28px;
+    text-align:center;
+    color: rgba(255,255,255,.55);
+    font-size: 13px;
+  }
+
+  @media (max-width: 520px){
+    .label .hint{max-width: 34ch;}
+    .panel-inner{padding: 18px 16px 6px;}
+    .lang{right: 0;}
+  }
+</style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="lang" aria-label="Language">
+      <button id="enBtn" class="active" type="button">EN</button>
+      <span class="sep">|</span>
+      <button id="trBtn" type="button">TR</button>
+    </div>
+
+    <header>
+      <h1>Erkan Kazdal</h1>
+      <div class="sub" id="subtitle">PERSONAL SITE • MINIMAL • COLORFUL</div>
+    </header>
+
+    <div class="menu">
+
+      <!-- ABOUT -->
+      <div class="menu-item" data-target="about" data-open="true">
+        <button class="menu-button" type="button" aria-expanded="true">
+          <div class="label">
+            <div class="title" id="aboutTitle">ABOUT</div>
+            <div class="hint" id="aboutHint">Short bio, background, skills, education.</div>
+          </div>
+          <div class="chev" aria-hidden="true"><span>⌄</span></div>
+        </button>
+        <div class="preview" aria-hidden="true">
+          <div class="p-body" id="aboutPreview">
+            Data & AI oriented Computer Programming student with hands-on IT background in Istanbul.
+          </div>
+        </div>
+      </div>
+
+      <!-- PROJECTS -->
+      <div class="menu-item" data-target="projects" data-open="false">
+        <button class="menu-button" type="button" aria-expanded="false">
+          <div class="label">
+            <div class="title" id="projectsTitle">PROJECTS</div>
+            <div class="hint" id="projectsHint">Chronological projects (2024+, 2022+).</div>
+          </div>
+          <div class="chev" aria-hidden="true"><span>⌄</span></div>
+        </button>
+        <div class="preview" aria-hidden="true">
+          <div class="p-body" id="projectsPreview">
+            XİNSANLAR (concept/manifesto), XİNSANLAR Documentary, Mixology → syrup & premix e-commerce attempt.
+          </div>
+        </div>
+      </div>
+
+      <!-- ARCHIVE -->
+      <div class="menu-item" data-target="archive" data-open="false">
+        <button class="menu-button" type="button" aria-expanded="false">
+          <div class="label">
+            <div class="title" id="archiveTitle">ARCHIVE</div>
+            <div class="hint" id="archiveHint">Fragments, drafts, short notes.</div>
+          </div>
+          <div class="chev" aria-hidden="true"><span>⌄</span></div>
+        </button>
+        <div class="preview" aria-hidden="true">
+          <div class="p-body" id="archivePreview">
+            Not finished projects—just small pieces: thoughts, sentences, observations.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- EXPAND PANEL -->
+    <section class="panel open" id="panel" aria-live="polite">
+      <div class="panel-inner" id="panelInner"></div>
+    </section>
+
+    <footer>© 2026</footer>
+  </div>
+
+<script>
+  let currentLang = "en";
+  let currentSection = "about";
+
+  const i18n = {
+    en: {
+      subtitle: "PERSONAL SITE • MINIMAL • COLORFUL",
+      menu: {
+        about:   { title: "ABOUT",    hint: "Short bio, background, skills, education." },
+        projects:{ title: "PROJECTS", hint: "Chronological projects (2024+, 2022+)." },
+        archive: { title: "ARCHIVE",  hint: "Fragments, drafts, short notes." }
+      },
+      preview: {
+        about: "Data & AI oriented Computer Programming student with hands-on IT background in Istanbul.",
+        projects: "XİNSANLAR (concept/manifesto), XİNSANLAR Documentary, Mixology → syrup & premix e-commerce attempt.",
+        archive: "Not finished projects—just small pieces: thoughts, sentences, observations."
+      }
+    },
+    tr: {
+      subtitle: "KİŞİSEL SİTE • MİNİMAL • RENKLİ",
+      menu: {
+        about:   { title: "HAKKIMDA", hint: "Kısa bio, eğitim, deneyim, beceriler." },
+        projects:{ title: "PROJELER", hint: "Kronolojik projeler (2024+, 2022+)." },
+        archive: { title: "ARŞİV",    hint: "Parçalar, taslaklar, kısa notlar." }
+      },
+      preview: {
+        about: "İstanbul’da yaşayan, veri ve yapay zekâ odaklı Bilgisayar Programcılığı öğrencisi.",
+        projects: "XİNSANLAR (konsept/manifesto), XİNSANLAR Belgeseli, Miksoloji → şurup & premix e-ticaret denemesi.",
+        archive: "Bitmiş projeler değil—kısa notlar, cümleler, gözlemler."
+      }
+    }
+  };
+
+  const content = {
+    en: {
+      about: `
+        <p>
+          My goal is to harness the power of data to create meaningful solutions that make a difference on social, economic,
+          and individual levels. I see artificial intelligence not as a system that replaces people, but as a collaborator that
+          enhances human creativity and productivity. I’m committed to growing in an ethical, sustainable, human-centered approach
+          to AI and building things that work.
+        </p>
+
+        <div class="contact">
+          <div><strong>Location:</strong> Istanbul</div>
+          <div><strong>Phone:</strong> 0552 551 54 41</div>
+          <div><strong>Email:</strong> erkankazdal@outlook.com</div>
+        </div>
+
+        <div class="list">
+          <div class="item">
+            <div class="meta">
+              <div class="name">Education</div>
+              <div class="when">Acıbadem University</div>
+            </div>
+            <div class="desc">
+              <strong>Computer Programming</strong> — coursework in Python (OOP), JavaScript, C, and Database Systems.
+              <br/>GPA: 2.76 / 4.00
+            </div>
+          </div>
+
+          <div class="item">
+            <div class="meta">
+              <div class="name">Education</div>
+              <div class="when">Çengelköy Vocational & Technical High School</div>
+            </div>
+            <div class="desc">
+              <strong>ATP — Database Programming</strong> — studied software and data management, practiced SQL database development,
+              received training in computer hardware and Microsoft Office applications.
+            </div>
+          </div>
+
+          <div class="item">
+            <div class="meta">
+              <div class="name">Experience</div>
+              <div class="when">Acıbadem Hospital</div>
+            </div>
+            <div class="desc">
+              <strong>Intern IT Manager</strong> — supported IT operations and infrastructure; troubleshooting, system maintenance,
+              hardware-related support, and day-to-day technical assistance.
+            </div>
+          </div>
+
+          <div class="item">
+            <div class="meta">
+              <div class="name">Technical</div>
+              <div class="when">Core skills</div>
+            </div>
+            <div class="desc">
+              Python (OOP) • JavaScript • C • SQL / Database Development
+              <div class="badge-row">
+                <span class="badge">Data mindset</span>
+                <span class="badge">Troubleshooting</span>
+                <span class="badge">IT fundamentals</span>
+                <span class="badge">System maintenance</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="item">
+            <div class="meta">
+              <div class="name">Courses & Training</div>
+              <div class="when">Ongoing</div>
+            </div>
+            <div class="desc">
+              Udemy: <strong>Python</strong> • Udemy: <strong>Data Science & Machine Learning</strong><br/>
+              <strong>YÖK Data Analytics School</strong> — currently attending AI-focused training, emphasizing real-world applications in data analysis.
+            </div>
+          </div>
+        </div>
+      `,
+
+      projects: `
+        <p>
+          Projects are listed chronologically. Each item is a separate track with its own intent and output.
+        </p>
+
+        <div class="list">
+          <div class="item">
+            <div class="meta">
+              <div class="name">XİNSANLAR</div>
+              <div class="when">2024 — Present</div>
+            </div>
+            <div class="desc">
+              A manifesto-like independent concept—positioned not as a clothing brand, but as a cultural frame.
+              It questions identity, silence, belonging, and collective responsibility.
+            </div>
+          </div>
+
+          <div class="item">
+            <div class="meta">
+              <div class="name">XİNSANLAR Documentary</div>
+              <div class="when">2024 — Concept</div>
+            </div>
+            <div class="desc">
+              Born from a simple motto: even if we are the “middle children of history,” every life still deserves a documentary.
+              A project about visibility, memory, and meaning.
+            </div>
+          </div>
+
+          <div class="item">
+            <div class="meta">
+              <div class="name">Mixology → Syrup & Premix E-commerce Attempt</div>
+              <div class="when">2022 — Present</div>
+            </div>
+            <div class="desc">
+              Professional mixology journey and product development mindset. In recent months, this evolved into an attempt to
+              transform syrup and premix production into an e-commerce business through a dedicated website.
+            </div>
+          </div>
+        </div>
+      `,
+
+      archive: `
+        <p>Not finished projects—just small pieces: short notes, drafts, fragments.</p>
+        <div class="list">
+          <div class="item">
+            <div class="meta">
+              <div class="name">Fragment #01</div>
+              <div class="when">Short note</div>
+            </div>
+            <div class="desc">Finished work proves skill. Unfinished work reveals direction.</div>
+          </div>
+          <div class="item">
+            <div class="meta">
+              <div class="name">Fragment #02</div>
+              <div class="when">Draft</div>
+            </div>
+            <div class="desc">Simplicity isn’t a style. It’s the courage to choose.</div>
+          </div>
+        </div>
+      `
+    },
+
+    tr: {
+      about: `
+        <p>
+          Hedefim; verinin gücünü kullanarak sosyal, ekonomik ve bireysel düzeyde fark yaratabilecek anlamlı çözümler üretmek.
+          Yapay zekâyı insanın yerine geçen bir sistem değil, insan yaratıcılığını ve üretkenliğini artıran bir “iş ortağı” gibi görüyorum.
+          Etik, sürdürülebilir ve insan-merkezli yapay zekâ yaklaşımına katkı sağlayacak şekilde gelişmeye ve çalışan sistemler üretmeye odaklanıyorum.
+        </p>
+
+        <div class="contact">
+          <div><strong>Konum:</strong> İstanbul</div>
+          <div><strong>Telefon:</strong> 0552 551 54 41</div>
+          <div><strong>E-posta:</strong> erkankazdal@outlook.com</div>
+        </div>
+
+        <div class="list">
+          <div class="item">
+            <div class="meta">
+              <div class="name">Eğitim</div>
+              <div class="when">Acıbadem Üniversitesi</div>
+            </div>
+            <div class="desc">
+              <strong>Bilgisayar Programcılığı</strong> — Python (OOP), JavaScript, C ve Veritabanı Sistemleri dersleri.
+              <br/>GNO: 2.76 / 4.00
+            </div>
+          </div>
+
+          <div class="item">
+            <div class="meta">
+              <div class="name">Eğitim</div>
+              <div class="when">Çengelköy Mesleki ve Teknik Anadolu Lisesi</div>
+            </div>
+            <div class="desc">
+              <strong>ATP — Veritabanı Programcılığı</strong> — yazılım ve veri yönetimi odaklı eğitim; SQL veritabanı geliştirme pratiği;
+              bilgisayar donanımı ve Microsoft Office uygulamaları eğitimi.
+            </div>
+          </div>
+
+          <div class="item">
+            <div class="meta">
+              <div class="name">Deneyim</div>
+              <div class="when">Acıbadem Hastanesi</div>
+            </div>
+            <div class="desc">
+              <strong>Stajyer IT Manager</strong> — IT operasyonlarına destek; troubleshooting, sistem bakımı, donanım desteği ve günlük teknik destek süreçleri.
+            </div>
+          </div>
+
+          <div class="item">
+            <div class="meta">
+              <div class="name">Teknik</div>
+              <div class="when">Çekirdek</div>
+            </div>
+            <div class="desc">
+              Python (OOP) • JavaScript • C • SQL / Veritabanı Geliştirme
+              <div class="badge-row">
+                <span class="badge">Veri odaklı düşünme</span>
+                <span class="badge">Troubleshooting</span>
+                <span class="badge">IT temelleri</span>
+                <span class="badge">Sistem bakımı</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="item">
+            <div class="meta">
+              <div class="name">Kurslar & Eğitimler</div>
+              <div class="when">Devam ediyor</div>
+            </div>
+            <div class="desc">
+              Udemy: <strong>Python</strong> • Udemy: <strong>Data Science & Machine Learning</strong><br/>
+              <strong>YÖK Data Analytics School</strong> — veri analizi içinde yapay zekâ ve gerçek dünya uygulamaları odağında eğitim.
+            </div>
+          </div>
+        </div>
+      `,
+
+      projects: `
+        <p>
+          Projeler kronolojik sırayla listelenmiştir. Her bir proje ayrı bir niyet ve çıktı hattıdır.
+        </p>
+
+        <div class="list">
+          <div class="item">
+            <div class="meta">
+              <div class="name">XİNSANLAR</div>
+              <div class="when">2024 — Devam ediyor</div>
+            </div>
+            <div class="desc">
+              Bir giyim markası olarak değil; bir <strong>manifesto / kavram</strong> olarak kurgulanan bağımsız proje.
+              Kimlik, sessizlik, aidiyet ve kolektif sorumluluk üzerine düşünsel bir çerçeve kurar.
+            </div>
+          </div>
+
+          <div class="item">
+            <div class="meta">
+              <div class="name">XİNSANLAR Belgeseli</div>
+              <div class="when">2024 — Konsept</div>
+            </div>
+            <div class="desc">
+              Şu motto ile ortaya çıktı: <strong>“Tarihin ortanca çocukları olsak bile, her hayatın belgeseli olmalı.”</strong>
+              Görünürlük, hafıza ve anlam üzerine konsept belgesel fikri.
+            </div>
+          </div>
+
+          <div class="item">
+            <div class="meta">
+              <div class="name">Miksoloji → Şurup & Premix E-ticaret Denemesi</div>
+              <div class="when">2022 — Devam ediyor</div>
+            </div>
+            <div class="desc">
+              Profesyonel miksoloji süreci ve ürün geliştirme yaklaşımı. Son aylarda; şurup ve premix üretimini,
+              bir web sitesi üzerinden e-ticaret işine dönüştürmeye yönelik girişim denemesi.
+            </div>
+          </div>
+        </div>
+      `,
+
+      archive: `
+        <p>Bitmiş projeler değil—kısa notlar, taslak fikirler, parçalar.</p>
+        <div class="list">
+          <div class="item">
+            <div class="meta">
+              <div class="name">Parça #01</div>
+              <div class="when">Kısa not</div>
+            </div>
+            <div class="desc">Bitmiş işler beceriyi gösterir. Yarım kalanlar yönü gösterir.</div>
+          </div>
+          <div class="item">
+            <div class="meta">
+              <div class="name">Parça #02</div>
+              <div class="when">Taslak</div>
+            </div>
+            <div class="desc">Sadelik bir stil değil; seçme cesareti.</div>
+          </div>
+        </div>
+      `
+    }
+  };
+
+  function updateMenuLanguage(){
+    const t = i18n[currentLang];
+
+    document.documentElement.lang = currentLang === "tr" ? "tr" : "en";
+    document.getElementById("subtitle").textContent = t.subtitle;
+
+    // titles & hints
+    document.getElementById("aboutTitle").textContent = t.menu.about.title;
+    document.getElementById("aboutHint").textContent = t.menu.about.hint;
+    document.getElementById("projectsTitle").textContent = t.menu.projects.title;
+    document.getElementById("projectsHint").textContent = t.menu.projects.hint;
+    document.getElementById("archiveTitle").textContent = t.menu.archive.title;
+    document.getElementById("archiveHint").textContent = t.menu.archive.hint;
+
+    // previews
+    document.getElementById("aboutPreview").textContent = t.preview.about;
+    document.getElementById("projectsPreview").textContent = t.preview.projects;
+    document.getElementById("archivePreview").textContent = t.preview.archive;
+  }
+
+  function render(section){
+    currentSection = section;
+
+    // menu open state
+    document.querySelectorAll(".menu-item").forEach(it => {
+      const open = it.dataset.target === section;
+      it.dataset.open = open ? "true" : "false";
+      const btn = it.querySelector(".menu-button");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+
+    // panel content
+    const title = i18n[currentLang].menu[section].title;
+    document.getElementById("panelInner").innerHTML = `<h2>${title}</h2>${content[currentLang][section]}`;
+    document.getElementById("panel").classList.add("open");
+
+    // smooth focus (optional)
+    document.getElementById("panel").scrollIntoView({behavior:"smooth", block:"start"});
+  }
+
+  // menu clicks
+  document.querySelectorAll(".menu-item").forEach(item => {
+    item.addEventListener("click", () => {
+      const section = item.dataset.target;
+      const isOpen = item.dataset.open === "true";
+
+      // toggle close if click same
+      if(isOpen){
+        item.dataset.open = "false";
+        item.querySelector(".menu-button").setAttribute("aria-expanded", "false");
+        document.getElementById("panel").classList.remove("open");
+        return;
+      }
+
+      render(section);
+    });
+  });
+
+  // language buttons
+  const enBtn = document.getElementById("enBtn");
+  const trBtn = document.getElementById("trBtn");
+
+  enBtn.addEventListener("click", () => {
+    currentLang = "en";
+    enBtn.classList.add("active");
+    trBtn.classList.remove("active");
+    updateMenuLanguage();
+    render(currentSection);
+  });
+
+  trBtn.addEventListener("click", () => {
+    currentLang = "tr";
+    trBtn.classList.add("active");
+    enBtn.classList.remove("active");
+    updateMenuLanguage();
+    render(currentSection);
+  });
+
+  // init
+  updateMenuLanguage();
+  render("about");
+</script>
+</body>
+</html>
