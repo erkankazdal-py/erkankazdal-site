@@ -800,6 +800,7 @@
 
   enBtn.addEventListener("click", () => {
     currentLang = "en";
+    localStorage.setItem("siteLang", "en");
     enBtn.classList.add("active");
     trBtn.classList.remove("active");
     updateMenuLanguage();
@@ -808,18 +809,36 @@
 
   trBtn.addEventListener("click", () => {
     currentLang = "tr";
+    localStorage.setItem("siteLang", "tr");
     trBtn.classList.add("active");
     enBtn.classList.remove("active");
     updateMenuLanguage();
     render(currentSection);
   });
 
+
   // init
+  const savedLang = localStorage.getItem("siteLang");
+
+  if(savedLang){
+    currentLang = savedLang;
+  }
+
+  if(currentLang === "tr"){
+    trBtn.classList.add("active");
+    enBtn.classList.remove("active");
+  }else{
+    enBtn.classList.add("active");
+    trBtn.classList.remove("active");
+  }
+
   updateMenuLanguage();
   render("about");
+
 </script>
 </body>
 </html>
+
 
 
 
