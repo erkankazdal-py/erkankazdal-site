@@ -336,6 +336,48 @@
     border-color: var(--accent);
     transform: translateY(-2px);
   }
+  
+    /* INLINE PANEL (menu item under itself) */
+  .inline-panel{
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(8px);
+    overflow: hidden;
+    transition: max-height .35s ease, opacity .25s ease, transform .25s ease, padding .25s ease;
+    padding: 0 18px;
+  }
+
+  .inline-panel.open{
+    max-height: 2200px;
+    opacity: 1;
+    transform: translateY(0);
+    padding: 10px 18px 16px;
+  }
+
+  .inline-inner{
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    background: rgba(0,0,0,.12);
+    backdrop-filter: blur(10px);
+    padding: 18px 18px 6px;
+  }
+
+  .inline-inner h2{
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.68);
+    margin-bottom: 12px;
+  }
+
+  /* (Opsiyonel) Panel içindeki yazıların spacing’i */
+  .inline-inner p{
+    color: rgba(255,255,255,.82);
+    line-height: 1.85;
+    font-size: 16px;
+    margin-bottom: 14px;
+  }
+
 </style>
 </head>
 
@@ -367,6 +409,11 @@
           <div class="p-body" id="aboutPreview">
             Data & AI oriented Computer Programming student with hands-on IT background in Istanbul.
           </div>
+          
+        <div class="inline-panel" aria-live="polite">
+          <div class="inline-inner"></div>
+        </div>
+          
         </div>
       </div>
 
@@ -403,11 +450,6 @@
       </div>
 
     </div>
-
-    <!-- EXPAND PANEL -->
-    <section class="panel open" id="panel" aria-live="polite">
-      <div class="panel-inner" id="panelInner"></div>
-    </section>
 
     <footer>© 2026</footer>
   </div>
@@ -838,6 +880,7 @@
 </script>
 </body>
 </html>
+
 
 
 
