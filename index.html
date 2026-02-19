@@ -336,6 +336,43 @@
     border-color: var(--accent);
     transform: translateY(-2px);
   }
+  /* ===== Inline slots (between menu items) ===== */
+.inline-slot{
+  height: 0;
+  overflow: hidden;
+  transition: height .28s ease;
+}
+
+/* slot açıkken içerik tıklanabilsin */
+.inline-slot.is-open{
+  overflow: visible;
+}
+
+/* slot içinde gösterilecek panel/kutu */
+.inline-panel{
+  margin: 10px 0 14px;
+  padding: 14px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(15,15,26,.55);
+  backdrop-filter: blur(10px);
+}
+
+/* panel içi başlık/boşluklar (opsiyonel ama temiz durur) */
+.inline-panel h3{
+  margin: 0 0 10px;
+  font-size: 14px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.92);
+}
+
+.inline-panel p{
+  margin: 0;
+  color: rgba(255,255,255,.70);
+  line-height: 1.55;
+}
+
 </style>
 </head>
 
@@ -370,6 +407,8 @@
         </div>
       </div>
 
+      <div class="inline-slot" id="slot-about"></div>
+
       <!-- PROJECTS -->
       <div class="menu-item" data-target="projects" data-open="false">
         <button class="menu-button" type="button" aria-expanded="false">
@@ -386,6 +425,8 @@
         </div>
       </div>
 
+      <div class="inline-slot" id="slot-projects"></div>
+
       <!-- ARCHIVE -->
       <div class="menu-item" data-target="archive" data-open="false">
         <button class="menu-button" type="button" aria-expanded="false">
@@ -401,6 +442,8 @@
           </div>
         </div>
       </div>
+
+      <div class="inline-slot" id="slot-archive"></div>
 
     </div>
 
@@ -756,39 +799,97 @@
     document.getElementById("archivePreview").textContent = t.preview.archive;
   }
 
-  function render(section){
-    currentSection = section;
+// ===== Inline slot rendering (multi-open) =====
+const slots = {
+  about: document.getElementById("slot-about"),
+  projects: document.getElementById("slot-projects"),
+  archive: document.getElementById("slot-archive"),
+};
 
-    // menu open state
-    document.querySelectorAll(".menu-item").forEach(it => {
-      const open = it.dataset.target === section;
-      it.dataset.open = open ? "true" : "false";
-      const btn = it.querySelector(".menu-button");
-      btn.setAttribute("aria-expanded", open ? "true" : "false");
-    });
+function setSlotHeight(slot) {
+  // içerik değişince doğru animasyon için yükseklik reset
+  slot.style.height = "auto";
+  const h = slot.scrollHeight;
+  slot.style.height = h + "px";
+}
 
-    // panel content
-    const title = i18n[currentLang].menu[section].title;
-    document.getElementById("panelInner").innerHTML = `<h2>${title}</h2>${content[currentLang][section]}`;
-    document.getElementById("panel").classList.add("open");
+function openSlot(section, { animate = true } = {}) {
+  const slot = slots[section];
+  if (!slot) return;
 
-    // smooth focus (optional)
-    document.getElementById("panel").scrollIntoView({behavior:"smooth", block:"start"});
+  // başlık + içerik
+  const title = i18n[currentLang].menu[section].title;
+
+  slot.innerHTML = `
+    <div class="inline-panel">
+      <h3>${title}</h3>
+      ${content[currentLang][section]}
+    </div>
+  `;
+
+  slot.classList.add("is-open");
+
+  if (!animate) {
+    slot.style.height = "auto";
+    return;
   }
 
-  // menu clicks
-  document.querySelectorAll(".menu-item").forEach(item => {
-    item.addEventListener("click", () => {
-      const section = item.dataset.target;
-      const isOpen = item.dataset.open === "true";
+  // height animasyonu
+  slot.style.height = "0px";
+  requestAnimationFrame(() => {
+    setSlotHeight(slot);
+  });
+}
 
-      // toggle close if click same
-      if(isOpen){
-        item.dataset.open = "false";
-        item.querySelector(".menu-button").setAttribute("aria-expanded", "false");
-        document.getElementById("panel").classList.remove("open");
-        return;
-      }
+function closeSlot(section) {
+  const slot = slots[section];
+  if (!slot) return;
+
+  // kapanma animasyonu
+  slot.style.height = slot.scrollHeight + "px";
+  requestAnimationFrame(() => {
+    slot.style.height = "0px";
+  });
+
+  slot.classList.remove("is-open");
+
+  // animasyon bitince içeriği temizle
+  setTimeout(() => {
+    slot.innerHTML = "";
+  }, 300);
+}
+
+// Dil değişince açık olanları yeniden çiz
+function rerenderOpenSections() {
+  document.querySelectorAll(".menu-item").forEach(item => {
+    const section = item.dataset.target;
+    const isOpen = item.dataset.open === "true";
+    if (isOpen) openSlot(section, { animate: false });
+  });
+}
+
+
+  // menu clicks (multi-open)
+document.querySelectorAll(".menu-item").forEach(item => {
+  const btn = item.querySelector(".menu-button");
+  if (!btn) return;
+
+  btn.addEventListener("click", () => {
+    const section = item.dataset.target;
+    const isOpen = item.dataset.open === "true";
+
+    // toggle
+    item.dataset.open = isOpen ? "false" : "true";
+    btn.setAttribute("aria-expanded", isOpen ? "false" : "true");
+
+    if (isOpen) {
+      closeSlot(section);
+    } else {
+      openSlot(section);
+    }
+  });
+});
+
 
       render(section);
     });
@@ -804,7 +905,7 @@
     enBtn.classList.add("active");
     trBtn.classList.remove("active");
     updateMenuLanguage();
-    render(currentSection);
+    rerenderOpenSections();
   });
 
   trBtn.addEventListener("click", () => {
@@ -838,6 +939,7 @@
 </script>
 </body>
 </html>
+
 
 
 
