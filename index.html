@@ -45,6 +45,7 @@
     font-size: 13px;
     letter-spacing: 2px;
     user-select: none;
+    z-index: 5;
   }
   .lang button{
     background: transparent;
@@ -189,40 +190,40 @@
     border-top-color: rgba(255,255,255,.12);
   }
 
-  /* ACTIVE (expanded) */
-  .menu-item[data-open="true"]{
+  /* OPEN (expanded) */
+  .menu-item.open{
     border-color: rgba(255,255,255,.26);
     background: rgba(255,255,255,.04);
   }
-  .menu-item[data-open="true"] .chev{
+  .menu-item.open .chev{
     transform: rotate(180deg);
     border-color: rgba(255,255,255,.35);
   }
 
-  /* EXPAND AREA */
+  /* EXPAND AREA (INSIDE EACH MENU ITEM) */
   .panel{
-    width:min(780px, 96vw);
-    margin: 22px auto 0;
-    border-radius: 20px;
-    border: 1px solid var(--line);
+    width: 100%;
+    border-top: 1px solid rgba(255,255,255,.12);
     background: rgba(0,0,0,.12);
     backdrop-filter: blur(10px);
     overflow: hidden;
 
     max-height: 0;
     opacity: 0;
-    transform: translateY(10px);
-    transition: max-height .35s ease, opacity .25s ease, transform .25s ease;
+    transform: translateY(8px);
+    transition: max-height .35s ease, opacity .25s ease, transform .25s ease, padding .25s ease;
+    padding: 0 18px;
   }
 
-  .panel.open{
-    max-height: 2200px;
+  .menu-item.open .panel{
+    max-height: 2400px;
     opacity: 1;
     transform: translateY(0);
+    padding: 14px 18px 16px;
   }
 
   .panel-inner{
-    padding: 22px 22px 6px;
+    padding: 4px 0 0;
   }
 
   .panel h2{
@@ -244,7 +245,7 @@
     margin-top: 10px;
     display:grid;
     gap: 10px;
-    padding-bottom: 18px;
+    padding-bottom: 6px;
   }
 
   .item{
@@ -308,9 +309,9 @@
 
   @media (max-width: 520px){
     .label .hint{max-width: 34ch;}
-    .panel-inner{padding: 18px 16px 6px;}
     .lang{right: 0;}
   }
+
   .cv-row{
     display:flex;
     gap:10px;
@@ -328,6 +329,9 @@
     color:rgba(255,255,255,.85);
     text-decoration:none;
     transition:all .25s ease;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
   }
 
   .cv-btn:hover{
@@ -355,19 +359,24 @@
     <div class="menu">
 
       <!-- ABOUT -->
-      <div class="menu-item" data-target="about" data-open="true">
-        <button class="menu-button" type="button" aria-expanded="true">
+      <div class="menu-item" data-target="about" data-open="false">
+        <button class="menu-button" type="button" aria-expanded="false">
           <div class="label">
             <div class="title" id="aboutTitle">ABOUT</div>
             <div class="hint" id="aboutHint">Short bio, background, skills, education.</div>
           </div>
           <div class="chev" aria-hidden="true"><span>⌄</span></div>
         </button>
+
         <div class="preview" aria-hidden="true">
           <div class="p-body" id="aboutPreview">
             Data & AI oriented Computer Programming student with hands-on IT background in Istanbul.
           </div>
         </div>
+
+        <section class="panel" aria-live="polite">
+          <div class="panel-inner"></div>
+        </section>
       </div>
 
       <!-- PROJECTS -->
@@ -379,11 +388,16 @@
           </div>
           <div class="chev" aria-hidden="true"><span>⌄</span></div>
         </button>
+
         <div class="preview" aria-hidden="true">
           <div class="p-body" id="projectsPreview">
             XİNSANLAR (concept/manifesto), XİNSANLAR Documentary, Mixology → syrup & premix e-commerce attempt.
           </div>
         </div>
+
+        <section class="panel" aria-live="polite">
+          <div class="panel-inner"></div>
+        </section>
       </div>
 
       <!-- ARCHIVE -->
@@ -395,26 +409,25 @@
           </div>
           <div class="chev" aria-hidden="true"><span>⌄</span></div>
         </button>
+
         <div class="preview" aria-hidden="true">
           <div class="p-body" id="archivePreview">
             Not finished projects—just small pieces: thoughts, sentences, observations.
           </div>
         </div>
+
+        <section class="panel" aria-live="polite">
+          <div class="panel-inner"></div>
+        </section>
       </div>
 
     </div>
-
-    <!-- EXPAND PANEL -->
-    <section class="panel open" id="panel" aria-live="polite">
-      <div class="panel-inner" id="panelInner"></div>
-    </section>
 
     <footer>© 2026</footer>
   </div>
 
 <script>
   let currentLang = "en";
-  let currentSection = "about";
 
   const i18n = {
     en: {
@@ -460,11 +473,9 @@
           <div><strong>Phone:</strong> 0552 551 54 41</div>
           <div><strong>Email:</strong> erkankazdal@outlook.com</div>
         </div>
-        
+
         <div class="cv-row">
-          <a class="cv-btn" href="./cv-erkan-kazdal-en.pdf" target="_blank" rel="noopener">
-            CV / EN
-          </a>
+          <a class="cv-btn" href="./cv-erkan-kazdal-en.pdf" target="_blank" rel="noopener">CV / EN</a>
         </div>
 
         <div class="list">
@@ -605,11 +616,9 @@
           <div><strong>Telefon:</strong> 0552 551 54 41</div>
           <div><strong>E-posta:</strong> erkankazdal@outlook.com</div>
         </div>
-        
+
         <div class="cv-row">
-          <a class="cv-btn" href="./cv-erkan-kazdal-tr.pdf" target="_blank" rel="noopener">
-            CV / TR
-          </a>
+          <a class="cv-btn" href="./cv-erkan-kazdal-tr.pdf" target="_blank" rel="noopener">CV / TR</a>
         </div>
 
         <div class="list">
@@ -742,7 +751,6 @@
     document.documentElement.lang = currentLang === "tr" ? "tr" : "en";
     document.getElementById("subtitle").textContent = t.subtitle;
 
-    // titles & hints
     document.getElementById("aboutTitle").textContent = t.menu.about.title;
     document.getElementById("aboutHint").textContent = t.menu.about.hint;
     document.getElementById("projectsTitle").textContent = t.menu.projects.title;
@@ -750,48 +758,57 @@
     document.getElementById("archiveTitle").textContent = t.menu.archive.title;
     document.getElementById("archiveHint").textContent = t.menu.archive.hint;
 
-    // previews
     document.getElementById("aboutPreview").textContent = t.preview.about;
     document.getElementById("projectsPreview").textContent = t.preview.projects;
     document.getElementById("archivePreview").textContent = t.preview.archive;
   }
 
-  function render(section){
-    currentSection = section;
-
-    // menu open state
-    document.querySelectorAll(".menu-item").forEach(it => {
-      const open = it.dataset.target === section;
-      it.dataset.open = open ? "true" : "false";
-      const btn = it.querySelector(".menu-button");
-      btn.setAttribute("aria-expanded", open ? "true" : "false");
-    });
-
-    // panel content
+  function renderIntoItem(section, itemEl){
     const title = i18n[currentLang].menu[section].title;
-    document.getElementById("panelInner").innerHTML = `<h2>${title}</h2>${content[currentLang][section]}`;
-    document.getElementById("panel").classList.add("open");
-
-    // smooth focus (optional)
-    document.getElementById("panel").scrollIntoView({behavior:"smooth", block:"start"});
+    itemEl.querySelector(".panel-inner").innerHTML = `<h2>${title}</h2>${content[currentLang][section]}`;
   }
 
-  // menu clicks
-  document.querySelectorAll(".menu-item").forEach(item => {
-    item.addEventListener("click", () => {
-      const section = item.dataset.target;
-      const isOpen = item.dataset.open === "true";
+  // Panel açılınca otomatik kaydırma (header sabit değil ama üst boşluk iyi dursun diye)
+  function scrollToPanel(itemEl){
+    const panel = itemEl.querySelector(".panel");
+    const rect = panel.getBoundingClientRect();
+    const y = window.scrollY + rect.top - 18; // küçük üst boşluk
+    window.scrollTo({ top: y, behavior: "smooth" });
+  }
 
-      // toggle close if click same
-      if(isOpen){
-        item.dataset.open = "false";
-        item.querySelector(".menu-button").setAttribute("aria-expanded", "false");
-        document.getElementById("panel").classList.remove("open");
-        return;
-      }
+  function openItem(itemEl){
+    const section = itemEl.dataset.target;
+    itemEl.classList.add("open");
+    itemEl.dataset.open = "true";
+    itemEl.querySelector(".menu-button").setAttribute("aria-expanded", "true");
+    renderIntoItem(section, itemEl);
 
-      render(section);
+    // animasyon başlasın diye bir frame bekleyip kaydır
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        scrollToPanel(itemEl);
+      });
     });
+  }
+
+  function closeItem(itemEl){
+    itemEl.classList.remove("open");
+    itemEl.dataset.open = "false";
+    itemEl.querySelector(".menu-button").setAttribute("aria-expanded", "false");
+  }
+
+  // menu toggles — multiple open allowed
+  document.querySelectorAll(".menu-item").forEach(item => {
+    const btn = item.querySelector(".menu-button");
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const isOpen = item.dataset.open === "true";
+      if(isOpen) closeItem(item);
+      else openItem(item);
+    });
+
+    // panel içi tıklamalar kartı toggle etmesin
+    item.querySelector(".panel").addEventListener("click", (e) => e.stopPropagation());
   });
 
   // language buttons
@@ -803,8 +820,15 @@
     localStorage.setItem("siteLang", "en");
     enBtn.classList.add("active");
     trBtn.classList.remove("active");
+
     updateMenuLanguage();
-    render(currentSection);
+
+    // açık olanları yeni dilde tekrar bas
+    document.querySelectorAll(".menu-item").forEach(item => {
+      if(item.dataset.open === "true"){
+        renderIntoItem(item.dataset.target, item);
+      }
+    });
   });
 
   trBtn.addEventListener("click", () => {
@@ -812,17 +836,20 @@
     localStorage.setItem("siteLang", "tr");
     trBtn.classList.add("active");
     enBtn.classList.remove("active");
-    updateMenuLanguage();
-    render(currentSection);
-  });
 
+    updateMenuLanguage();
+
+    // açık olanları yeni dilde tekrar bas
+    document.querySelectorAll(".menu-item").forEach(item => {
+      if(item.dataset.open === "true"){
+        renderIntoItem(item.dataset.target, item);
+      }
+    });
+  });
 
   // init
   const savedLang = localStorage.getItem("siteLang");
-
-  if(savedLang){
-    currentLang = savedLang;
-  }
+  if(savedLang) currentLang = savedLang;
 
   if(currentLang === "tr"){
     trBtn.classList.add("active");
@@ -833,14 +860,9 @@
   }
 
   updateMenuLanguage();
-  render("about");
 
+  // başlangıçta hiçbir şey açık olmasın
+  document.querySelectorAll(".menu-item").forEach(item => closeItem(item));
 </script>
 </body>
 </html>
-
-
-
-
-
-
